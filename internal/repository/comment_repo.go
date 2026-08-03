@@ -17,6 +17,18 @@ func (c *CommentRepository) Create(comment *models.Comment) error {
 	query := "INSERT INTO comments (task_id, author, content) VALUES ($1, $2, $3) RETURNING id, created_at"
 	return c.db.QueryRow(query, &comment.TaskID, &comment.Author, &comment.Content).Scan(&comment.ID, &comment.CreatedAt)
 }
+func (r *CommentRepository) GetByID(id int) (*models.Comment, error) {
+	var comment models.Comment
+	query := `SELECT id, task_id, author, content, created_at FROM comments WHERE id = $1`
+	err := r.db.QueryRow(query, id).Scan(&comment.ID, &comment.TaskID, &comment.Author, &comment.Content, &comment.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &comment, nil
+}
 func (c *CommentRepository) GetByTaskID(taskID int) ([]models.Comment, error) {
 	query := "SELECT id, task_id, author, content, created_at FROM comments WHERE task_id = $1 ORDER BY created_at"
 	rows, err := c.db.Query(query, taskID)
