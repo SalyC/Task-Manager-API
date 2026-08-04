@@ -19,6 +19,17 @@ func NewTaskHandler(svc *service.TaskService) *TaskHandler {
 	return &TaskHandler{service: svc}
 }
 
+// CreateTask godoc
+// @Summary      Создать задачу
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        request body models.CreateTaskRequest true "Данные задачи"
+// @Success      201  {object}  models.Task
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks [post]
 func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		ProjectID   int     `json:"project_id"`
@@ -86,6 +97,15 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, task)
 }
 
+// GetTask godoc
+// @Summary      Получить задачу по ID
+// @Tags         tasks
+// @Produce      json
+// @Param        id path int true "ID задачи"
+// @Success      200  {object}  models.Task
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks/{id} [get]
 func (h *TaskHandler) GetTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
@@ -108,6 +128,15 @@ func (h *TaskHandler) GetTask(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, task)
 }
 
+// GetAllTasks godoc
+// @Summary      Получить все задачи
+// @Tags         tasks
+// @Produce      json
+// @Param        project_id query int false "ID проекта"
+// @Param        status query string false "Статус (new, in_progress, done)" Enums(new, in_progress, done)
+// @Success      200  {array}  models.Task
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks [get]
 func (h *TaskHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	projectIDStr := r.URL.Query().Get("project_id")
 	statusStr := r.URL.Query().Get("status")
@@ -140,6 +169,18 @@ func (h *TaskHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, tasks)
 }
 
+// UpdateTask godoc
+// @Summary      Обновить задачу
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID задачи"
+// @Param        request body models.UpdateTaskRequest true "Данные для обновления"
+// @Success      200  {object}  models.Task
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks/{id} [put]
 func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
@@ -227,6 +268,14 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, existing)
 }
 
+// DeleteTask godoc
+// @Summary      Удалить задачу по ID
+// @Tags         tasks
+// @Param        id path int true "ID задачи"
+// @Success      204
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks/{id} [delete]
 func (h *TaskHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]

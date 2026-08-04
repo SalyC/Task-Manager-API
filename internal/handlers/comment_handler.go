@@ -19,8 +19,21 @@ func NewCommentHandler(svc *service.CommentService) *CommentHandler {
 	return &CommentHandler{service: svc}
 }
 
-//! Если это читать кто то будет, то нумерацию ошибок я добавил для себя как эксперимент, лучше не стоит так делать
+// ! Если это читать кто то будет, то нумерацию ошибок я добавил для себя как эксперимент, лучше не стоит так делать
 
+// CreateComment godoc
+// @Summary      Создать комментарий
+// @Description  Создаёт комментарий к задаче
+// @Tags         comments
+// @Accept       json
+// @Produce      json
+// @Param        taskId path int true "ID задачи"
+// @Param        request body models.CreateCommentRequest true "Данные комментария"
+// @Success      201  {object}  models.Comment
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks/{taskId}/comments [post]
 func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["taskId"]
@@ -86,6 +99,15 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJSON(w, http.StatusCreated, comment)
 }
+
+// GetCommentsByTask godoc
+// @Summary      Получить все комментарии к задаче
+// @Tags         comments
+// @Produce      json
+// @Param        taskId path int true "ID задачи"
+// @Success      200  {array}  models.Comment
+// @Failure      500  {object}  map[string]string
+// @Router       /tasks/{taskId}/comments [get]
 func (h *CommentHandler) GetCommentsByTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["taskId"]
@@ -101,6 +123,15 @@ func (h *CommentHandler) GetCommentsByTask(w http.ResponseWriter, r *http.Reques
 	}
 	respondWithJSON(w, http.StatusOK, comments)
 }
+
+// DeleteComment godoc
+// @Summary      Удалить комментарий по ID
+// @Tags         comments
+// @Param        id path int true "ID комментария"
+// @Success      204
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /comments/{id} [delete]
 func (h *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]

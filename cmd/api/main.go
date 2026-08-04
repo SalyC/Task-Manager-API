@@ -10,10 +10,19 @@ import (
 	"taskmanager/internal/repository"
 	"taskmanager/internal/service"
 
+	_ "taskmanager/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"github.com/gorilla/mux"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+// @title           Task Manager API
+// @version         1.0
+// @description      API для управления проектами, задачами и комментариями
+// @host            localhost:8080
+// @BasePath        /
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -43,6 +52,9 @@ func main() {
 	commentHandler := handlers.NewCommentHandler(commentSvc)
 
 	r := mux.NewRouter()
+
+	//! Сваггер
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	//! роутинг по проектам
 	r.HandleFunc("/projects", projectHandler.GetAllProjects).Methods("GET")
