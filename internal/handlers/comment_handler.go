@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"taskmanager/internal/models"
@@ -40,17 +41,28 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		Author  string `json:"author"`
 		Content string `json:"content"`
 	}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Error 400: Invalid JSON")
+		return
+	}
+	log.Printf("Decoded input: %+v", input)
+
+	if _, err := h.service.GetByTaskID(taskId); err != nil {
+		if err == service.ErrTaskNotFound {
+			respondWithError(w, http.StatusNotFound, "Task not found")
+			return
+		}
+		respondWithError(w, http.StatusInternalServerError, "Failed to check task")
+		return
+	}
+
 	if input.Author == "" {
 		respondWithError(w, http.StatusBadRequest, "Error 400: Author is required")
 		return
 	}
 	if input.Content == "" {
 		respondWithError(w, http.StatusBadRequest, "Error 400: Comment content is required")
-		return
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Error 400: Invalid JSON")
 		return
 	}
 

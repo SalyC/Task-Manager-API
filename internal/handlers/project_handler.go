@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"taskmanager/internal/models"
@@ -39,6 +40,7 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.Create(project); err != nil {
+		log.Printf("ERROR creating project: %v", err)
 		if err == service.ErrProjectNameRequired {
 			respondWithError(w, http.StatusBadRequest, err.Error())
 			return
