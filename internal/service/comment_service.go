@@ -3,15 +3,14 @@ package service
 import (
 	"errors"
 	"taskmanager/internal/models"
-	"taskmanager/internal/repository"
 )
 
 type CommentService struct {
-	commentRepo *repository.CommentRepository
+	commentRepo CommentRepositoryInterface
 	taskSvc     *TaskService
 }
 
-func NewCommentService(CommentRepo *repository.CommentRepository, taskSvc *TaskService) *CommentService {
+func NewCommentService(CommentRepo CommentRepositoryInterface, taskSvc *TaskService) *CommentService {
 	return &CommentService{
 		commentRepo: CommentRepo,
 		taskSvc:     taskSvc,

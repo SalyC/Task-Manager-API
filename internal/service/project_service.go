@@ -7,7 +7,7 @@ import (
 )
 
 type ProjectService struct {
-	repo *repository.ProjectRepository
+	repo ProjectRepositoryInterface
 }
 
 func NewProjectService(repo *repository.ProjectRepository) *ProjectService {
