@@ -3,14 +3,13 @@ package service
 import (
 	"errors"
 	"taskmanager/internal/models"
-	"taskmanager/internal/repository"
 )
 
 type ProjectService struct {
 	repo ProjectRepositoryInterface
 }
 
-func NewProjectService(repo *repository.ProjectRepository) *ProjectService {
+func NewProjectService(repo ProjectRepositoryInterface) *ProjectService {
 	return &ProjectService{repo: repo}
 }
 
